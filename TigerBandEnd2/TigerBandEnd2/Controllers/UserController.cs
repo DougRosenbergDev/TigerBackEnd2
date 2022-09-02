@@ -36,14 +36,14 @@ namespace TigerBandEnd2.Controllers
         public async Task<ActionResult<List<UserController>>> Get(int userId)
         {
             var users = await _context.Users
-                .Where(u => u.UserId == userId)
+                //.Where(u => u.UserId == userId)
                 .Include(u => u.Device)
                 .Include(u => u.Plans)
                 .ToListAsync();
-            return users;
+            //return users;
+            return Ok(User);
         }
 
-        // POST api/<UserController>
         [HttpPost]
         public async Task<ActionResult<List<User>>> Create(CreateUserDto request)
         {
@@ -55,20 +55,21 @@ namespace TigerBandEnd2.Controllers
             {
                 Name = request.UserName,
                 Email = request.Email,
-                User = user
+                //UserId = user
             };
 
             _context.Users.Add(newUser);
             await _context.SaveChangesAsync();
 
-            return await Get(newUser.UserId);
+            //return await Get(newUser.UserId);
+            return CreatedAtAction("Get", new { id = user.Id }, user);
         }
 
-        [HttpPost("weapon")]
-        public async Task<ActionResult<User>> AddWeapon(AddUserDeviceDto request)
+        [HttpPost("device")]
+        public async Task<ActionResult<User>> AddWeapon(AddDeviceDto request)
         {
-            var character = await _context.Users.FindAsync(request.UserId);
-            if (character == null)
+            var user = await _context.Users.FindAsync(request.UserId);
+            if (user == null)
                 return NotFound();
 
             var newDevice = new Device
@@ -82,13 +83,13 @@ namespace TigerBandEnd2.Controllers
             _context.Devices.Add(newDevice);
             await _context.SaveChangesAsync();
 
-            return character;
+            return user;
         }
 
         [HttpPost("skill")]
         public async Task<ActionResult<User>> AddCharacterSkill(AddUserPlanDto request)
         {
-            var character = await _context.Users
+            var user = await _context.Users
                 .Where(u => u.Id == request.UserId)
                 .Include(u => u.Plans)
                 .FirstOrDefaultAsync();
@@ -99,10 +100,10 @@ namespace TigerBandEnd2.Controllers
             if (plan == null)
                 return NotFound();
 
-            character.Plans.Add(plan);
+            user.Plans.Add(plan);
             await _context.SaveChangesAsync();
 
-            return character;
+            return user;
         }
 
 

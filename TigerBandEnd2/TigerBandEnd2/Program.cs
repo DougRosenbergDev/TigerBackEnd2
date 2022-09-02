@@ -9,8 +9,7 @@ namespace TigerBandEnd2
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // thursday 11-aug 2:23:16
-            builder.Services.AddCors(options =>
+           builder.Services.AddCors(options =>
             {
                 options.AddPolicy("AllowAll",
                     policy =>
@@ -23,7 +22,7 @@ namespace TigerBandEnd2
 
             builder.Services.AddDbContext<PhoneDbContext>(options =>
             {
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+                options.UseSqlServer(builder.Configuration["ConnectionString:DefaultConnection"]);
             });
 
             //builder.Services.AddDatabaseDeveloperPageExceptionFilter();
