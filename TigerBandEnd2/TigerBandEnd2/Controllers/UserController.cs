@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System;
+using System.Linq;
+using System.Collections.Generic;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TigerBandEnd2.Data;
@@ -22,19 +25,33 @@ namespace TigerBandEnd2.Controllers
     
         // GET: api/<UserController>
         [HttpGet]
-        //public async Task<ActionResult<IEnumerable<UserController>>> GetUsers()
-        //{
-        //    if (_context.Users == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    return await _context.Users.ToListAsync();
-        //}
+        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+        {
+            if (_context.Users == null)
+            {
+                return NotFound();
+            }
+            return await _context.Users.ToListAsync();
+        }
 
         // GET api/<UserController>/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<List<UserController>>> Get(int userId)
+        public async Task<ActionResult<List<UserController>>> GetUser(int id)
         {
+            if (_context.Users == null)
+            {
+                return NotFound();
+            }
+            var user = await _context.Users.FindAsync(id);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var plans = await _context.Plans.Where(p => p.UserId == id).ToListAsync();
+            var devices = await _context.Devices.Where(d => d.Plan.UserId == id).ToListAsync();
+
             var users = await _context.Users
                 //.Where(u => u.UserId == userId)
                 .Include(u => u.Device)
@@ -62,11 +79,11 @@ namespace TigerBandEnd2.Controllers
             await _context.SaveChangesAsync();
 
             //return await Get(newUser.UserId);
-            return CreatedAtAction("Get", new { id = user.Id }, user);
+            return CreatedAtAction("Get", new { id = user.UserId }, user);
         }
 
         [HttpPost("device")]
-        public async Task<ActionResult<User>> AddWeapon(AddDeviceDto request)
+        public async Task<ActionResult<User>> AddDevice(AddDeviceDto request)
         {
             var user = await _context.Users.FindAsync(request.UserId);
             if (user == null)
@@ -86,11 +103,11 @@ namespace TigerBandEnd2.Controllers
             return user;
         }
 
-        [HttpPost("skill")]
-        public async Task<ActionResult<User>> AddCharacterSkill(AddUserPlanDto request)
+        [HttpPost("plan")]
+        public async Task<ActionResult<User>> AddUserPlan(AddUserPlanDto request)
         {
             var user = await _context.Users
-                .Where(u => u.Id == request.UserId)
+                .Where(u => u.UserId == request.UserId)
                 .Include(u => u.Plans)
                 .FirstOrDefaultAsync();
             if (user == null)
@@ -115,9 +132,9 @@ namespace TigerBandEnd2.Controllers
             {
                 return NotFound();
             }
-            var passenger = await _context.Users.FindAsync(id);
+            var user = await _context.Users.FindAsync(id);
 
-            if (passenger == null)
+            if (user == null)
             {
                 return NotFound();
             }
@@ -131,7 +148,7 @@ namespace TigerBandEnd2.Controllers
 
         private bool UserExists(int id)
         {
-            return (_context.Users?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.Users?.Any(e => e.UserId == id)).GetValueOrDefault();
         }
     }
 }

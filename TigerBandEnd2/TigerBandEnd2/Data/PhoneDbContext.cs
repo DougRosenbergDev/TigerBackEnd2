@@ -15,10 +15,28 @@ namespace TigerBandEnd2.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            //bill (b) combines entities
+
+            //modelBuilder.Entity<User>()
+            //    .HasKey(b => b.UserId);
+
             modelBuilder.Entity<Plan>()
-                .HasOne<User>(p => p.User)
+                .HasOne(p => p.User)
                 .WithMany(d => d.Plans)
-                .HasForeignKey(f => UserId);
+                .HasForeignKey(b => b.UserId);
+
+            modelBuilder.Entity<Device>()
+                 .HasOne(p => p.Plan)
+                 .WithMany(d => d.Devices)
+                 .HasForeignKey(b => b.PlanId);
+
+            modelBuilder.Entity<Device>()
+                .HasIndex(p => p.PhoneNumber)
+                .IsUnique();
+
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.Name)
+                .IsUnique();
         }
     }
 }

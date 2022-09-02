@@ -2,8 +2,9 @@
   "ExpandedNodes": [
     "",
     "\\TigerBandEnd2",
-    "\\TigerBandEnd2\\TigerBandEnd2"
+    "\\TigerBandEnd2\\TigerBandEnd2",
+    "\\TigerBandEnd2\\TigerBandEnd2\\Models"
   ],
-  "SelectedNode": "\\TigerBandEnd2\\TigerBandEnd2\\appsettings.json",
+  "SelectedNode": "\\TigerBandEnd2\\TigerBandEnd2\\Models\\Device.cs",
   "PreviewInSolutionExplorer": false
 }
