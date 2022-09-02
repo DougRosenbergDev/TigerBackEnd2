@@ -1,4 +1,6 @@
-﻿namespace TigerBandEnd2.Models
+﻿using System.Text.Json.Serialization;
+
+namespace TigerBandEnd2.Models
 {
     public class Plan
     {
@@ -6,6 +8,7 @@
         public string PlanName { get; set; }
         public int PlanType { get; set; }
         public int PlanPrice { get; set; }
-        public List<User> Users { get; set; }
+        [JsonIgnore]
+        public virtual User? User { get; set; }
     }
 }

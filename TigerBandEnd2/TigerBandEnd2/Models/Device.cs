@@ -6,7 +6,7 @@
         public string Type { get; set; }
         public string Model { get; set; }
         public int DevicePrice { get; set; }
-        public User User { get; set; }
+        public int PhoneNumber { get; set; }
         public int UserId { get; set; }
     }
 }

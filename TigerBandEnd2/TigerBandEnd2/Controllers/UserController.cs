@@ -109,8 +109,29 @@ namespace TigerBandEnd2.Controllers
 
         // DELETE api/<UserController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<IActionResult> DeleteUser(int id)
         {
+            if (_context.Users == null)
+            {
+                return NotFound();
+            }
+            var passenger = await _context.Users.FindAsync(id);
+
+            if (passenger == null)
+            {
+                return NotFound();
+            }
+
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+
+        }
+
+        private bool UserExists(int id)
+        {
+            return (_context.Users?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

@@ -13,5 +13,12 @@ namespace TigerBandEnd2.Data
         public DbSet<Device> Devices { get; set; }
         public DbSet<Plan> Plans { get; set; }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Plan>()
+                .HasOne<User>(p => p.User)
+                .WithMany(d => d.Plans)
+                .HasForeignKey(f => UserId);
+        }
     }
 }
